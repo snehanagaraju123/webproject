@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Dashboard</title>
+</head>
+<body class="min-h-screen bg-slate-50 flex flex-col items-center p-8">
+  <header class="w-full max-w-4xl flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-semibold">👋 Hi, <span id="studentName"></span></h1>
+    <button id="logoutBtn" class="text-sm text-red-600 underline">Log out</button>
+  </header>
+
+  <section class="grid sm:grid-cols-2 gap-6 w-full max-w-4xl">
+    <!-- Card 1 -->
+    <div id="detailsCard" class="cursor-pointer rounded-xl p-6 bg-white shadow hover:shadow-md transition">
+      <h2 class="text-xl font-medium"><a href="details.html"><u>My detailsCard</u></a></h2>
+      <p class="text-slate-600 mt-2">View and verify your profile information.</p>
+    </div>
+
+    <!-- Card 2 -->
+    <div id="apiCard" class="cursor-pointer rounded-xl p-6 bg-white shadow hover:shadow-md transition">
+      <h2 class="text-xl font-medium">Dummy API Data</h2>
+      <p class="text-slate-600 mt-2"><a href="https://jsonplaceholder.typicode.com/posts/">Fetch a random post from <u>jsonplaceholder.</u></a></p>
+    </div>
+  </section>
+
+  <!-- Modal for dummy API -->
+  <dialog id="apiModal" class="rounded-md shadow p-6">
+    <h3 class="text-lg font-semibold mb-2">API Response</h3>
+    <pre id="apiContent" class="whitespace-pre-wrap text-sm bg-slate-100 p-3 rounded"></pre>
+    <button onclick="apiModal.close()" class="mt-4 bg-indigo-600 text-white rounded px-4 py-1">
+      Close
+    </button>
+  </dialog>
+
+  <script type="module">
+    import { getCurrentUser, logout } from "./js/main.js";
+
+    const user = getCurrentUser();
+    if (!user) location.href = "login.html";
+    document.getElementById("studentName").textContent = user.name;
+    document.getElementById("logoutBtn").onclick = logout;
+
+    // Card 1 – go to details page
+   document.getElementById("detailsCard").onclick = () => location.href = "details.html";
+
+    // Card 2 – fetch dummy API
+    document.getElementById("apiCard").onclick = async () => {
+      const res  = await fetch("https://jsonplaceholder.typicode.com/posts/" + (Math.floor(Math.random()*10)+1));
+      const data = await res.json();
+      document.getElementById("apiContent").textContent = JSON.stringify(data, null, 2);
+      apiModal.showModal();
+    };
+  </script>
+</body>
+</html>

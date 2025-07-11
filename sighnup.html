@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Signup</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+          },
+          colors: {
+            primary: '#6366f1', // indigo‑500
+            accent:  '#ec4899', // fuchsia‑500
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+       background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW6Fqv4jN4hsH5oNTgaKbKBDtvQoJK8F3sPQ&s");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+       font-family: 'Poppins', sans-serif; 
+      }
+
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-indigo-400 to-accent relative overflow-hidden">
+
+  <!-- subtle background shape -->
+  <div class="absolute -top-36 -left-36 w-96 h-96 bg-pink-300/30 rounded-full blur-3xl"></div>
+  <div class="absolute -bottom-36 -right-36 w-96 h-96 bg-cyan-300/30 rounded-full blur-3xl"></div>
+
+  <form id="signupForm" class="relative z-10 w-full max-w-md p-10 bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl ring-1 ring-white/60 space-y-6">
+    <h1 class="text-3xl font-semibold text-center text-slate-800">Create Account</h1>
+
+    <div class="space-y-4">
+      <input  name="name"     placeholder="Full Name"    class="block w-full px-4 py-3 rounded-xl border border-slate-300 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" />
+      <input  name="email"    placeholder="Email"        type="email" class="block w-full px-4 py-3 rounded-xl border border-slate-300 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" />
+      <input  name="password" placeholder="Password"     type="password" class="block w-full px-4 py-3 rounded-xl border border-slate-300 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" />
+    </div>
+
+    <button class="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-indigo-700 active:scale-95 transition-transform shadow-lg shadow-indigo-600/30 location.href='dashboard.html'">Sign up</button>
+
+    <p class="text-center text-sm text-slate-600">Have an account?
+      <a href="login.html" class="text-primary font-medium hover:text-indigo-700 underline-offset-4 hover:underline">Log in</a>
+    </p>
+    <p id="msg" class="text-center text-sm text-rose-600"></p>
+  </form>
+
+  <script>
+    const f = document.getElementById("signupForm");
+    const msgEl = document.getElementById("msg");
+    f.onsubmit = async (e) => {
+      e.preventDefault();
+      msgEl.textContent = "";
+      const body = Object.fromEntries(new FormData(f).entries());
+      try {
+        const res = await fetch("/api/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Sign‑up failed");
+        // store id + go to dashboard
+        sessionStorage.setItem("uid", data.id);
+        location.href = "dashboard.html";
+      } catch (err) {
+        msgEl.textContent = err.message;
+      }
+    };
+  </script>
+</body>
+</html>

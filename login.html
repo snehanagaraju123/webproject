@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Login</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+          },
+          colors: {
+            primary: '#6366f1', // indigo‑500
+            accent:  '#ec4899', // fuchsia‑500
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-indigo-400 to-accent relative overflow-hidden">
+
+  <!-- backdrop decorative shapes -->
+  <div class="absolute -top-32 -left-32 w-80 h-80 bg-purple-300/30 rounded-full blur-3xl"></div>
+  <div class="absolute -bottom-32 -right-32 w-80 h-80 bg-blue-300/30 rounded-full blur-3xl"></div>
+
+  <form id="loginForm" class="relative z-10 w-full max-w-md p-10 bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl ring-1 ring-white/60 space-y-6">
+    <h1 class="text-3xl font-semibold text-center text-slate-800">Welcome Back</h1>
+
+    <div class="space-y-4">
+      <input name="email" placeholder="Email" type="email"
+             class="block w-full px-4 py-3 rounded-xl border border-slate-300 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" />
+      <input name="password" placeholder="Password" type="password"
+             class="block w-full px-4 py-3 rounded-xl border border-slate-300 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" />
+    </div>
+
+    <button class="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-indigo-700 active:scale-95 transition-transform shadow-lg shadow-indigo-600/30">Log in</button>
+
+    <p class="text-center text-sm text-slate-600">Don't have an account?
+      <a href="signup.html" class="text-primary font-medium hover:text-indigo-700 underline-offset-4 hover:underline">Sign up</a>
+    </p>
+    <p id="msg" class="text-center text-sm text-rose-600"></p>
+  </form>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const msgEl = document.getElementById("msg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msgEl.textContent = "";
+      const body = Object.fromEntries(new FormData(form).entries());
+
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Login failed");
+        // Store user data & navigate
+        sessionStorage.setItem("uid",  data.id);
+        sessionStorage.setItem("name", data.name);
+        location.href = "dashboard.html";
+      } catch (err) {
+        msgEl.textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>
